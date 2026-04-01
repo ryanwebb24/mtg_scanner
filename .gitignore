@@ -1,0 +1,13 @@
+# ESP-IDF / ESP32 generated artifacts
+esp32_code/build/
+esp32_code/.idf/
+esp32_code/.espressif/
+esp32_code/managed_components/
+
+# Generated SDK config backup/locks (keep sdkconfig itself tracked)
+esp32_code/sdkconfig.old
+esp32_code/dependencies.lock
+
+# Common editor/system noise (optional, safe to ignore)
+.DS_Store
+Thumbs.db
