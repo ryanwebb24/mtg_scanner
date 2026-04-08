@@ -33,14 +33,14 @@ void uart_setup(void) {
 }
 
 void gpio_setup(void) {
-    gpio_config_t config = {
+    /*gpio_config_t config = {
       .mode = GPIO_MODE_INPUT,
       .pull_up_en = GPIO_PULLUP_ENABLE,
       .pull_down_en = GPIO_PULLDOWN_DISABLE,
       .intr_type = GPIO_INTR_DISABLE,
     };
     gpio_config(&config);
-
+    */
     gpio_reset_pin(DE_RE_PIN);
     gpio_set_direction(DE_RE_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(DE_RE_PIN, 0);  // start in receive mode
@@ -72,12 +72,21 @@ void send_message(const char *msg) {
 bool receive_message(uint8_t *buf, int *len) {
     uint8_t tmp[256];
     int msg = uart_read_bytes(UART_PORT, tmp, sizeof(tmp), 100 / portTICK_PERIOD_MS);
-    
+    // add this:
+    printf("raw bytes (%d): ", msg);
+    for (int i = 0; i < msg; i++) printf("%02X ", tmp[i]);
+    printf("\n");
+
     if (msg < 4 || tmp[0] != NODE_ID) return false;
 
-    int data_len = msg - 3;
-    uint16_t rec_crc = tmp[msg - 3] | (tmp[msg - 2] << 8);
-    uint16_t calc_crc = esp_crc16_le(0, tmp, data_len + 1);
+    int total = msg;  // bytes read
+    int data_len = total - 4;  // subtract node_id + crc_lo + crc_hi + newline
+    uint16_t rec_crc = tmp[total - 3] | (tmp[total - 2] << 8);
+    uint16_t calc_crc = esp_crc16_le(0, tmp, data_len + 1); // +1 for NODE_ID
+
+    printf("rec_crc  = 0x%04X\n", rec_crc);
+    printf("calc_crc = 0x%04X\n", calc_crc);
+
     if (rec_crc != calc_crc) return false;
 
     *len = data_len;
@@ -113,7 +122,6 @@ void app_main(void) {
     while (1) {
 
       if (!receive_message(buf, &len)) {
-        send_message("ERROR");
         continue;
       }
 
