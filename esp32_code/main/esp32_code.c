@@ -13,6 +13,20 @@
 #define NODE_ID 0x01 // this is hardcoded now but when we do more esps we will need to build the node_id at start when pi will give node_id on init
 #define DE_RE_PIN GPIO_NUM_4
 
+uint16_t calc_checksum(uint8_t *data, int len) {
+    uint16_t crc = 0xFFFF;
+    for (int i = 0; i < len; i++) {
+        crc ^= data[i];
+        for (int j = 0; j < 8; j++) {
+            if (crc & 0x0001) {
+                crc = (crc >> 1) ^ 0x8408;
+            } else {
+                crc >>= 1;
+            }
+        }
+    }
+    return crc;
+}
 
 void uart_setup(void) {
   uart_config_t uart_config = {
@@ -55,7 +69,9 @@ void send_message(const char *msg) {
 
   memcpy(packet + 1, msg, msg_len);
 
-  uint16_t calc_crc = esp_crc16_le(0, packet, msg_len + 1 );
+  //uint16_t calc_crc = esp_crc16_le(0, packet, msg_len + 1 );
+  uint16_t calc_crc = calc_checksum(packet, msg_len + 1);
+
 
   packet[msg_len + 1] = calc_crc & 0xFF;
   packet[msg_len + 2] = (calc_crc >> 8) & 0xFF;
@@ -82,7 +98,8 @@ bool receive_message(uint8_t *buf, int *len) {
     int total = msg;  // bytes read
     int data_len = total - 4;  // subtract node_id + crc_lo + crc_hi + newline
     uint16_t rec_crc = tmp[total - 3] | (tmp[total - 2] << 8);
-    uint16_t calc_crc = esp_crc16_le(0, tmp, data_len + 1); // +1 for NODE_ID
+    //uint16_t calc_crc = esp_crc16_le(0, tmp, data_len + 1); // +1 for NODE_ID
+    uint16_t calc_crc = calc_checksum(tmp, data_len + 1);    
 
     printf("rec_crc  = 0x%04X\n", rec_crc);
     printf("calc_crc = 0x%04X\n", calc_crc);
