@@ -34,8 +34,8 @@ void init_uart(void) {
     ESP_ERROR_CHECK(uart_param_config(UART_NUM_2, &uart_config));
     ESP_ERROR_CHECK(uart_set_pin(UART_NUM_2, tx_pin, rx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
     ESP_ERROR_CHECK(uart_driver_install(UART_NUM_2, uart_buffer_size, uart_buffer_size, 10, &uart_queue, 0));
-    ESP_ERROR_CHECK(uart_set_mode(UART_NUM_2, UART_MODE_UART));
-    // ESP_ERROR_CHECK(uart_set_mode(UART_NUM_2, UART_MODE_RS485_HALF_DUPLEX)); // RS485
+    // ESP_ERROR_CHECK(uart_set_mode(UART_NUM_2, UART_MODE_UART));
+    ESP_ERROR_CHECK(uart_set_mode(UART_NUM_2, UART_MODE_RS485_HALF_DUPLEX));  // RS485
 }
 
 int receive_message(uint8_t* buffer, int buffer_len, int timeout_ms) {
@@ -104,5 +104,7 @@ void uart_task(void* pvParameters) {
         //  buf[1] to buf[len-3] is your data
 
         // do something based on what came in
+        uint8_t msg[] = "REC";
+        send_message(0x01, msg, 3);
     }
 }
