@@ -8,5 +8,6 @@ void initRS485() {}
 void sendMsgTask(void* param) {}
 
 void sendMsg(String msg) {}
+void registerDevice(String& addr) {}
 
 #endif

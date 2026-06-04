@@ -44,3 +44,16 @@ void initRS485() {
     RS485.receive();
     xTaskCreate(sendMsgTask, "send", 4096, NULL, 2, NULL);
 }
+
+void registerDevice(String& addr) {
+    String mac = WiFi.macAddress();
+    sendMsg("REGISTER:" + mac + "\n");
+
+    String raw;
+    if (xQueueReceive(receiveQueue, &raw, pdMS_TO_TICKS(5000))) {
+        Message m = parseMessage(raw);
+        if (m.cmd == "ADDR") {
+            addr = m.data;
+        }
+    }
+}
