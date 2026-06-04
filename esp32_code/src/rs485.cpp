@@ -59,7 +59,7 @@ void registerDevice(String& addr) {
     String raw;
     if (xQueueReceive(receiveQueue, &raw, pdMS_TO_TICKS(5000))) {
         Message msg = parseMessage(raw);
-        if (msg.cmd == "ADDR") {
+        if (msg.cmd == "ADDR" && msg.addr == mac) {
             addr = msg.data;
         }
     }
