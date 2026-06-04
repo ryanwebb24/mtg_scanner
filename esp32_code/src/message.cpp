@@ -1,4 +1,4 @@
-#include "message.cpp"
+#include "message.h"
 
 Message parseMessage(const String& raw) {
     Message msg;
@@ -10,5 +10,6 @@ Message parseMessage(const String& raw) {
     return msg;
 }
 
-String buildMessage(const Message& msg){
-    return msg.addr + msg.cmd + msg.data + "\n"}
+String buildMessage(const Message& msg) {
+    return msg.addr + msg.cmd + msg.data + "\n";
+}

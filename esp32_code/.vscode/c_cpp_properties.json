@@ -8,8 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
+                "/home/rwebb/personal/code/mtg_scanner/esp32_code/include",
                 "/home/rwebb/personal/code/mtg_scanner/esp32_code/src",
-                "/home/rwebb/personal/code/mtg_scanner/esp32_code/.pio/libdeps/esp32dev/ArduinoRS485/src",
+                "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
@@ -235,7 +236,6 @@
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/USB/src",
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/Update/src",
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
-                "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
                 "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
@@ -244,8 +244,9 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
+                    "/home/rwebb/personal/code/mtg_scanner/esp32_code/include",
                     "/home/rwebb/personal/code/mtg_scanner/esp32_code/src",
-                    "/home/rwebb/personal/code/mtg_scanner/esp32_code/.pio/libdeps/esp32dev/ArduinoRS485/src",
+                    "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
@@ -471,7 +472,6 @@
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/USB/src",
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/Update/src",
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
-                    "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
                     "/home/rwebb/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",

@@ -3,11 +3,14 @@
 
 #include <Arduino.h>
 
-void initRS485() {}
+extern QueueHandle_t receiveQueue;
+extern QueueHandle_t sendQueue;
 
-void sendMsgTask(void* param) {}
+void initRS485();
 
-void sendMsg(String msg) {}
-void registerDevice(String& addr) {}
+void sendMsgTask(void* param);
+
+void sendMsg(const String& msg);
+void registerDevice(String& addr);
 
 #endif

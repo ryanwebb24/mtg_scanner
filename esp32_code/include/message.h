@@ -10,8 +10,8 @@ struct Message {
     String addr;
 };
 
-Message parseMessage(const String& raw) {}
+Message parseMessage(const String& raw);
 
-String buildMessage(const Message& msg) {}
+String buildMessage(const Message& msg);
 
 #endif

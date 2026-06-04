@@ -11,6 +11,7 @@ void processTask(void* param) {
         if (xQueueReceive(receiveQueue, &raw, portMAX_DELAY)) {
             Message msg = parseMessage(raw);
 
+            Serial.println("cmd: " + msg.cmd + " data: " + msg.data);
             if (msg.cmd == "forward") {
             } else if (msg.cmd == "left") {
             } else if (msg.cmd == "right") {

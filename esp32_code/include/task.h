@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 
-#include "messaging.h"
+#include "message.h"
 #include "rs485.h"
 
-void processTask(void* param) {}
+void processTask(void* param);
 
 #endif
