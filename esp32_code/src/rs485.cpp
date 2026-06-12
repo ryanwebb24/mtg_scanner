@@ -6,7 +6,8 @@
 #include "message.h"
 
 #define DE_PIN 4
-#define RS485_SERIAL Serial1
+#define RS485_SERIAL Serial2
+#define PI_ADRESS "00"
 
 QueueHandle_t receiveQueue;
 QueueHandle_t sendQueue;
@@ -28,15 +29,18 @@ void sendMsg(const String& msg) {
 }
 
 void receiveMsgTask(void* param) {
-    String msg = "";
+    char msg[MAX_MSG_LEN] = {0};
+    int idx = 0;
     while (true) {
         while (RS485_SERIAL.available()) {
             char c = RS485_SERIAL.read();
             if (c == '\n') {
-                xQueueSend(receiveQueue, &msg, portMAX_DELAY);
-                msg = "";
-            } else {
-                msg += c;
+                msg[idx] = '\0';
+                xQueueSend(receiveQueue, msg, portMAX_DELAY);
+                idx = 0;
+                memset(msg, 0, MAX_MSG_LEN);
+            } else if (idx < MAX_MSG_LEN - 1) {
+                msg[idx++] = c;
             }
         }
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -44,23 +48,31 @@ void receiveMsgTask(void* param) {
 }
 
 void initRS485() {
+    Serial.begin(115200);
+    Serial.println("initRS485 start");
     pinMode(DE_PIN, OUTPUT);
     digitalWrite(DE_PIN, LOW);
-    RS485_SERIAL.begin(115200);
-    receiveQueue = xQueueCreate(10, sizeof(String));
+    RS485_SERIAL.begin(115200, SERIAL_8N1, 16, 17);  // RX=16, TX=17
+    receiveQueue = xQueueCreate(10, MAX_MSG_LEN);
     sendQueue = xQueueCreate(10, sizeof(String));
     xTaskCreate(sendMsgTask, "send", 4096, NULL, 2, NULL);
     xTaskCreate(receiveMsgTask, "receive", 4096, NULL, 2, NULL);
+    Serial.println("initRS485 done");
 }
 
 void registerDevice(String& addr) {
     String mac = WiFi.macAddress();
-    sendMsg("REGISTER:" + mac + "\n");
-    String raw;
-    if (xQueueReceive(receiveQueue, &raw, pdMS_TO_TICKS(5000))) {
-        Message msg = parseMessage(raw);
-        if (msg.cmd == "ADDR" && msg.addr == mac) {
-            addr = msg.data;
+    while (addr == "") {
+        sendMsg(buildMessage("00", "REGISTER", mac));
+        char raw[MAX_MSG_LEN];
+        if (xQueueReceive(receiveQueue, raw, pdMS_TO_TICKS(5000))) {
+            Message msg = parseMessage(String(raw));
+            if (msg.cmd == "ADDR" && msg.data != "") {
+                addr = msg.data;
+                Serial.println("assigned addr: " + addr);
+            }
+        } else {
+            Serial.println("timeout, retrying...");
         }
     }
 }

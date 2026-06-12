@@ -4,14 +4,15 @@
 #include <Arduino.h>
 
 struct Message {
-    String msg;
+    String addr;
     String cmd;
     String data;
-    String addr;
 };
 
 Message parseMessage(const String& raw);
 
 String buildMessage(const Message& msg);
+
+String buildMessage(const String& addr, const String& cmd, const String& data);
 
 #endif

@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#define MAX_MSG_LEN 128
+
 extern QueueHandle_t receiveQueue;
 extern QueueHandle_t sendQueue;
 

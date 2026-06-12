@@ -1,20 +1,32 @@
 #include "task.h"
 
-#include <Arduino.h>
+void handleForward(const String& data) {
+    Serial.println("forward");
+}
+void handleLeft(const String& data) {
+    Serial.println("left");
+}
+void handleRight(const String& data) {
+    Serial.println("right");
+}
 
-#include "message.h"
-#include "rs485.h"
+Command commands[] = {
+    {"forward", handleForward},
+    {"left", handleLeft},
+    {"right", handleRight},
+};
 
 void processTask(void* param) {
     String raw;
     while (true) {
-        if (xQueueReceive(receiveQueue, &raw, portMAX_DELAY)) {
-            Message msg = parseMessage(raw);
-
-            Serial.println("cmd: " + msg.cmd + " data: " + msg.data);
-            if (msg.cmd == "forward") {
-            } else if (msg.cmd == "left") {
-            } else if (msg.cmd == "right") {
+        char raw[MAX_MSG_LEN];
+        if (xQueueReceive(receiveQueue, raw, portMAX_DELAY)) {
+            Message msg = parseMessage(String(raw));
+            for (auto& c : commands) {
+                if (c.name == msg.cmd) {
+                    c.handler(msg.data);
+                    break;
+                }
             }
         }
     }
