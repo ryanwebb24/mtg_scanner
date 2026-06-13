@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "rs485.h"
+#include "stepper.h"
 #include "task.h"
 
 String deviceAddr = "";
@@ -14,6 +15,7 @@ void startupTask(void* param) {
 
 void setup() {
     initRS485();
+    initStepper();
     xTaskCreate(startupTask, "startup", 4096, NULL, 1, NULL);
 }
 

@@ -13,9 +13,9 @@ QueueHandle_t receiveQueue;
 QueueHandle_t sendQueue;
 
 void sendMsgTask(void* param) {
-    String msg;
+    char msg[MAX_MSG_LEN];
     while (true) {
-        if (xQueueReceive(sendQueue, &msg, portMAX_DELAY)) {
+        if (xQueueReceive(sendQueue, msg, portMAX_DELAY)) {
             digitalWrite(DE_PIN, HIGH);
             RS485_SERIAL.print(msg);
             RS485_SERIAL.flush();
@@ -25,7 +25,9 @@ void sendMsgTask(void* param) {
 }
 
 void sendMsg(const String& msg) {
-    xQueueSend(sendQueue, &msg, portMAX_DELAY);
+    char buf[MAX_MSG_LEN];
+    msg.toCharArray(buf, MAX_MSG_LEN);
+    xQueueSend(sendQueue, buf, portMAX_DELAY);
 }
 
 void receiveMsgTask(void* param) {
@@ -52,9 +54,9 @@ void initRS485() {
     Serial.println("initRS485 start");
     pinMode(DE_PIN, OUTPUT);
     digitalWrite(DE_PIN, LOW);
-    RS485_SERIAL.begin(115200, SERIAL_8N1, 16, 17);  // RX=16, TX=17
+    RS485_SERIAL.begin(115200, SERIAL_8N1, 16, 17);
     receiveQueue = xQueueCreate(10, MAX_MSG_LEN);
-    sendQueue = xQueueCreate(10, sizeof(String));
+    sendQueue = xQueueCreate(10, MAX_MSG_LEN);
     xTaskCreate(sendMsgTask, "send", 4096, NULL, 2, NULL);
     xTaskCreate(receiveMsgTask, "receive", 4096, NULL, 2, NULL);
     Serial.println("initRS485 done");
@@ -63,11 +65,11 @@ void initRS485() {
 void registerDevice(String& addr) {
     String mac = WiFi.macAddress();
     while (addr == "") {
-        sendMsg(buildMessage("00", "REGISTER", mac));
+        sendMsg(buildMessage("00", "REG", mac));
         char raw[MAX_MSG_LEN];
         if (xQueueReceive(receiveQueue, raw, pdMS_TO_TICKS(5000))) {
             Message msg = parseMessage(String(raw));
-            if (msg.cmd == "ADDR" && msg.data != "") {
+            if (msg.cmd == "ADR" && msg.data != "") {
                 addr = msg.data;
                 Serial.println("assigned addr: " + addr);
             }

@@ -1,30 +1,27 @@
 #include "task.h"
 
-void handleForward(const String& data) {
-    Serial.println("forward");
-}
-void handleLeft(const String& data) {
-    Serial.println("left");
-}
-void handleRight(const String& data) {
-    Serial.println("right");
+#include "stepper.h"
+
+void handleStepper(const String& cmd, const String& data) {
+    char c[CMD_LEN];
+    cmd.toCharArray(c, CMD_LEN);
+    xQueueSend(stepperQueue, c, portMAX_DELAY);
 }
 
 Command commands[] = {
-    {"forward", handleForward},
-    {"left", handleLeft},
-    {"right", handleRight},
+    {"FWD", handleStepper},
+    {"LFT", handleStepper},
+    {"RGT", handleStepper},
 };
 
 void processTask(void* param) {
-    String raw;
+    char raw[MAX_MSG_LEN];
     while (true) {
-        char raw[MAX_MSG_LEN];
         if (xQueueReceive(receiveQueue, raw, portMAX_DELAY)) {
             Message msg = parseMessage(String(raw));
             for (auto& c : commands) {
                 if (c.name == msg.cmd) {
-                    c.handler(msg.data);
+                    c.handler(msg.cmd, msg.data);
                     break;
                 }
             }
