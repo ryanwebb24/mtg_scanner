@@ -3,25 +3,25 @@
 #include "rs485.h"
 
 QueueHandle_t stepperQueue;
-AccelStepper stepperForward(AccelStepper::FULL4WIRE, MOTOR1_IN1, MOTOR1_IN2, MOTOR1_IN3, MOTOR1_IN4);
-AccelStepper stepperLateral(AccelStepper::FULL4WIRE, MOTOR2_IN1, MOTOR2_IN2, MOTOR2_IN3, MOTOR2_IN4);
+AccelStepper stepperForward(AccelStepper::HALF4WIRE, MOTOR1_IN1, MOTOR1_IN2, MOTOR1_IN3, MOTOR1_IN4);
+AccelStepper stepperLateral(AccelStepper::HALF4WIRE, MOTOR2_IN1, MOTOR2_IN2, MOTOR2_IN3, MOTOR2_IN4);
 
 void initStepper() {
     stepperQueue = xQueueCreate(10, CMD_LEN);
-    stepperForward.setMaxSpeed(800.0);
-    stepperLateral.setMaxSpeed(800.0);
-    stepperForward.setAcceleration(200.0);
-    stepperLateral.setAcceleration(200.0);
+    stepperForward.setMaxSpeed(400.0);
+    stepperLateral.setMaxSpeed(400.0);
+    stepperForward.setAcceleration(100.0);
+    stepperLateral.setAcceleration(100.0);
     xTaskCreate(stepperTask, "stepper", 4096, NULL, 1, NULL);
 }
 
 void moveCard(const String& cmd) {
     if (cmd == "FWD") {
-        stepperForward.move(4096);
+        stepperForward.move(800);
     } else if (cmd == "LFT") {
-        stepperLateral.move(-4096);
+        stepperLateral.move(-800);
     } else if (cmd == "RGT") {
-        stepperLateral.move(4096);
+        stepperLateral.move(800);
     }
 }
 
